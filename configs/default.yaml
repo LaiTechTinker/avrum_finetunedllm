@@ -1,0 +1,87 @@
+project:
+  name: agri-ai-assistant
+  version: 0.1.0
+  root_dir: .
+  seed: 42
+  device: auto
+  log_level: INFO
+
+paths:
+  data_dir: datasets
+  checkpoints_dir: checkpoints
+  logs_dir: logs
+  mlruns_dir: mlruns
+  cache_dir: .cache
+  config_path: configs/default.yaml
+  adapter_dir: qwen_agriculture_lora/adapter
+  tokenizer_dir: qwen_agriculture_lora/tokenizer
+
+training:
+  output_dir: qwen_agriculture_lora
+  num_train_epochs: 2
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 8
+  learning_rate: 2.0e-3
+  weight_decay: 0.01
+  warmup_ratio: 0.03
+  lr_scheduler_type: cosine
+  bf16: true
+  fp16: false
+  optim: paged_adamw_8bit
+  max_seq_length: 512
+  logging_steps: 10
+  save_steps: 100
+  eval_steps: 100
+  save_total_limit: 2
+  dataloader_num_workers: 4
+  remove_unused_columns: false
+  report_to: [mlflow]
+  eval_strategy: epoch
+  save_strategy: epoch
+
+model:
+  base_model_name: Qwen/Qwen2-1.5B-Instruct
+  model_revision: main
+  trust_remote_code: false
+  torch_dtype: bfloat16
+  use_flash_attention_2: true
+  use_cache: false
+  gradient_checkpointing: true
+  attention_implementation: sdpa
+  quantization:
+    load_in_4bit: true
+    quant_type: nf4
+    use_double_quant: true
+    compute_dtype: bfloat16
+
+lora:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+  bias: none
+  task_type: CAUSAL_LM
+
+dataset:
+  source_file: datasets/train-00000-of-00001 (2).parquet
+  train_file: datasets/train.jsonl
+  validation_file: datasets/validation.jsonl
+  test_file: datasets/test.jsonl
+  format: chatml
+  max_samples: null
+  cache_dataset: true
+
+reproducibility:
+  python: ">=3.11"
+  transformers: "4.46.3"
+  datasets: "3.1.0"
+  accelerate: "1.1.1"
+  bitsandbytes: "0.44.1"
+  peft: "0.19.1 (saved adapter metadata); requirements currently declares 0.13.2"
+  trl: "0.12.1"
+
+mlflow:
+  experiment_name: agri-ai-assistant-qlora
+  tracking_uri: file:mlruns
+  log_artifacts: true
+  register_model: false

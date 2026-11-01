@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgricLLM Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div>
+        <h1>AgricLLM</h1>
+        <p>Simple demo for your fine-tuned agriculture model</p>
+      </div>
+      <span id="status" class="status">Ready</span>
+    </header>
+
+    <section id="chat" class="chat">
+      <div class="welcome">
+        <h2>Ask an agriculture question</h2>
+        <p>Send a question and watch the model response stream in real time.</p>
+      </div>
+    </section>
+
+    <form id="chat-form" class="composer">
+      <textarea
+        id="question"
+        rows="1"
+        placeholder="Ask something about farming..."
+        autocomplete="off"
+        required
+      ></textarea>
+      <button id="send-btn" type="submit">Send</button>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
