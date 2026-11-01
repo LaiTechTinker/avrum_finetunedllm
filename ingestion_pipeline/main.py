@@ -1,43 +1,60 @@
 
 import logging
-from datetime import datetime
-from itertools import islice
 
+from ingestion_pipeline.logger import setup_logger
 from ingestion_pipeline.database import test_connection
 from ingestion_pipeline.extractor import extract_messages
 from ingestion_pipeline.processor import process_conversations
 from ingestion_pipeline.exporter import export_conversations
 
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logger = logging.getLogger(__name__)
 
 
 def main():
 
-    print("Starting Avrum Data Ingestion Pipeline...")
+    run_id = setup_logger()
 
-    if not test_connection():
-        print("Database connection failed.")
-        return
+    logger.info("=" * 50)
+    logger.info("AVRUM DATA INGESTION PIPELINE STARTED")
+    logger.info("Run ID: %s", run_id)
+    logger.info("=" * 50)
 
-    print("\nStarting data extraction...")
+    try:
 
-    messages = extract_messages()
+        logger.info("Checking MongoDB connection")
 
-    print("\nStarting conversation processing...")
+        if not test_connection():
+            logger.error("Database connection failed")
+            return
 
-    conversations = process_conversations(messages)
+        logger.info("MongoDB connection successful")
 
-    print("\nExporting conversations to JSON...")
+        logger.info("Starting message extraction")
 
-    exported_count = export_conversations(conversations)
+        messages = extract_messages()
 
-    print("\nIngestion pipeline completed.")
+        logger.info("Starting conversation processing")
 
-    print(f"Total conversations exported: {exported_count}")
+        conversations = process_conversations(messages)
+
+        logger.info("Starting JSON export")
+
+        exported_count = export_conversations(
+            conversations,
+            run_id
+        )
+
+        logger.info("=" * 50)
+        logger.info("INGESTION PIPELINE COMPLETED SUCCESSFULLY")
+        logger.info("Total conversations exported: %s", exported_count)
+        logger.info("=" * 50)
+
+    except Exception:
+
+        logger.exception("Ingestion pipeline failed")
+
+        raise
 
 
 if __name__ == "__main__":
