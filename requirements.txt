@@ -1,16 +1,28 @@
-# torch
-# transformers
-# datasets
-# accelerate
-# bitsandbytes
-# peft
-# trl
-# pyyaml
-# sentencepiece
-# fastapi==0.116.1
-# uvicorn[standard]==0.35.0
-# pydantic==2.11.7
-# pydantic-settings==2.10.1
-# boto3
+# Core machine learning framework
+torch
+transformers
+datasets
+accelerate
+
+# QLoRA and quantization
+bitsandbytes
+peft
+
+# Supervised fine-tuning
+trl
+
+# Hugging Face authentication and model access
+huggingface_hub
+
+# Experiment tracking
+mlflow
+
+# Model serialization and tokenizer support
+safetensors
+sentencepiece
+
 pymongo
 python-dotenv
+
+# beam client installation
+beam-client
