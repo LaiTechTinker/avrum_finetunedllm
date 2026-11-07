@@ -1,7 +1,7 @@
 
 # Avrum Agricultural LLM Training Pipeline
 
-A reusable training pipeline for fine-tuning an open-source language model on agricultural question-answering data.
+A reusable   pipeline for fine-tuning an open-source language model on agricultural question-answering data.
 
 This project converts the original Jupyter notebook training experiment into a modular Python pipeline.
 
@@ -61,6 +61,20 @@ training_pipeline/
 ├── .gitignore
 └── README.md
 ```
+```text
+ingestion_pipeline/
+│
+|
+├── 
+│   ├── config.py
+│   ├── database.py
+│   ├── exporter.py
+│   ├── extractor.py
+│   └── logger.py
+|    |___main.py
+|    |___processor.py
+
+```
 
 ---
 
@@ -76,6 +90,8 @@ training_pipeline/
 | `requirements.txt` | Lists Python dependencies. |
 | `.env.example` | Documents required environment variables. |
 | `.gitignore` | Excludes secrets, checkpoints and generated artifacts from Git. |
+|`beam_app.py` |initiate the traning on beam cloud 
+|`beam_config.py` |use to config traning config on the cloud
 
 ---
 
@@ -100,7 +116,26 @@ Create a `.env` file from `.env.example` when local environment configuration is
 Required Hugging Face credential:
 
 ```env
-HF_TOKEN=your_huggingface_token
+REGION=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+BUCKET_NAME = 
+HF_TOKEN=
+ARN=
+MONGODB_URI=
+DATABASE_NAME=
+COLLECTION_NAME=
+
+# # Hugging Face access token
+# HF_TOKEN=your_huggingface_token_here
+
+# Model and dataset
+HF_MODEL_NAME=Qwen/Qwen2-1.5B-Instruct
+HF_DATASET_NAME=KisanVaani/agriculture-qa-english-only
+
+# beam
+BEAM_TOKEN=
+
 ```
 
 Never commit real credentials to GitHub.
@@ -176,7 +211,7 @@ The intended cloud workflow is:
 2. Install compatible training dependencies.
 3. Provide Hugging Face credentials securely.
 4. Provision the required GPU.
-5. Execute `src.train`.
+5. Execute `python -m training_pipeline/cloud/beam_app.py`.
 6. Persist checkpoints and final model artifacts.
 7. Retrieve the trained artifacts.
 
@@ -184,24 +219,13 @@ Cloud execution and persistent storage configuration are not yet implemented.
 
 ---
 
-## 10. Development Principles
+## 10.Beam cloud traning setup
+- create account on beam cloud: https://www.beam.cloud/
+-create an api_key and save it in the env file
+-install the beam sdk using ` pip install beam-client`
+- authenticate your local workspace to have access to remote workspace using : `beam configure default --token YOUR_BEAM_TOKEN`
 
-- Preserve the original training hyperparameters.
-- Keep the pipeline modular and maintainable.
-- Avoid unnecessary abstractions.
-- Keep credentials outside source control.
-- Separate training logic from cloud infrastructure.
-- Verify model artifacts after training.
+
 
 ---
 
-## Project Status
-
-Current stage: Initial pipeline implementation and code review.
-
-Next steps:
-- Verify package compatibility.
-- Review the training implementation against the original notebook.
-- Test dataset preparation and formatting.
-- Implement Beam cloud execution.
-- Run and evaluate the fine-tuned model.
